@@ -69,8 +69,20 @@ endif()
 find_package( PO4A REQUIRED )
 
 # Discover if the Asciidoc toolchain is available
-find_package( ASCIIDOC REQUIRED )
-find_package( A2X REQUIRED )
+find_package( ASCIIDOC )
+find_package( A2X )
+
+# Discover if the Asciidoc toolchain is available
+find_package( ASCIIDOCTOR )
+
+if(NOT ((ASCIIDOC_FOUND AND A2X_FOUND) OR ASCIIDOCTOR_FOUND))
+  message(FATAL_ERROR "At least one of asciidoc or asciidoctor is required")
+endif()
+
+include(CMakeDependentOption)
+# Use asciidoctor when it is available, but asciidoc is not
+CMAKE_DEPENDENT_OPTION( USE_ASCIIDOCTOR "Prefer asciidoctor over a2x/asciidoc" ON
+"ASCIIDOCTOR_FOUND" OFF)
 
 include( KiCadDocumentation )
 add_subdirectory( src )
